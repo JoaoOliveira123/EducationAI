@@ -1,39 +1,45 @@
 from typing import List
 
 class OptionsMaker:
-    def mountMenuAndReturnInputValue(self, options: List):
-        indexesOfOptions = self.printOptionsWithIndexAndReturnThem(options)
+    def mountMenu(self, options: List):
+        self.printOptionsWithIndex(options)
         print('[0] CANCEL\n')
-        return int(input(f'Choose one option {indexesOfOptions}: '))
 
-    def printOptionsWithIndexAndReturnThem(self, options: List):
-        listOfIndexes = [0]
+    def printOptionsWithIndex(self, options: List):
         for index, option in enumerate(options):
             print(f'[{index + 1}] {option}')
-            listOfIndexes.append(index + 1)
-        return listOfIndexes
 
 class AsksToUser:
     def __init__(self):
-        self.askAndKeepSearchTerm()
-        self.verifyAndKeepPrefixesAsked()
+        self.askAndKeepWikipediaSearchTerm()
+        self.correctAndKeepPrefixesAsked()
 
-    def askAndKeepSearchTerm(self):
+    def askAndKeepWikipediaSearchTerm(self):
         self.searchTerm =  input('Type a Wikipedia search term: ')
     
-    def verifyAndKeepPrefixesAsked(self):
-        prefixes = ['Who Is', 'What Is', 'The History of']
+    def correctAndKeepPrefixesAsked(self, prefixes: List=['Who Is', 'What Is', 'The History of']):
+        indexOfPrefixChosen = self.askPrefixesAndReturnIndex(prefixes)
         while True:
-            indexOfPrefixChosen = self.askAndReturnPrefixes(prefixes)
-            if indexOfPrefixChosen > len(prefixes):
-                print('Please enter a valid prefix')
-                continue
-            break
+            if self.verifyPrefixesAsked(indexOfPrefixChosen, len(prefixes)):
+                break
         self.prefix = prefixes[indexOfPrefixChosen - 1]
+    
+    def verifyPrefixesAsked(self, index: int, prefixes_quantity: int):
+        try:
+            return self.verifyNumberOfPrefixesAsked(index, prefixes_quantity)
+        except:
+            print('Please type a integer number')
 
-    def askAndReturnPrefixes(self, prefixes: List):
+    def verifyNumberOfPrefixesAsked(self, index: int, prefixes_quantity: int):
+        if 0 > index > prefixes_quantity:
+            print('Invalid Number, try again\n')
+            return False
+        return True
+
+    def askPrefixesAndReturnIndex(self, prefixes: List):
         optionsMaker = OptionsMaker()
-        return optionsMaker.mountMenuAndReturnInputValue(prefixes)
+        optionsMaker.mountMenu(prefixes)
+        return int(input(f'Type a number to choose a prefix for {self.searchTerm}'))
 
 if __name__ == '__main__':
     userAsking = AsksToUser()
